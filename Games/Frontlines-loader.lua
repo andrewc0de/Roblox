@@ -1,3 +1,11 @@
+-- Set hitbox size, transparency level, and notification status
+-- execute in game not in lobby please
+local size = Vector3.new(10, 10, 10)
+local trans = 1
+local notifications = false
+
+
+
 -- Store the time when the code starts executing
 local start = os.clock()
 
@@ -18,8 +26,10 @@ esp.Boxes = true
 esp.Names = false
 esp.Tracers = false
 esp.Players = false
+esp.FaceCamera = true 
 
--- Add an object listener to the workspace to detect enemy models
+
+
 esp:AddObjectListener(workspace, {
     Name = "soldier_model",
     Type = "Model",
@@ -27,22 +37,36 @@ esp:AddObjectListener(workspace, {
 
     -- Specify the primary part of the model as the HumanoidRootPart
     PrimaryPart = function(obj)
+        pos = obj:FindFirstChild("HumanoidRootPart").Position --get the pos to refrence to 
         local root
         repeat
-            root = obj:FindFirstChild("HumanoidRootPart")
+            for _, bp in pairs(workspace:GetChildren()) do--find the basepart to highlight
+                if bp:IsA("BasePart") then
+                    local distance = (bp.Position - pos).Magnitude
+                    if distance <= 3 then
+                        root = bp 
+                        break 
+                    end
+                end
+            end
             task.wait()
         until root
         return root
     end,
 
-    -- Use a validator function to ensure that models do not have the "friendly_marker" child
     Validator = function(obj)
+        -- Wait for 1 second before continuing execution
         task.wait(1)
+
+        -- Check if the object has a child named "friendly_marker"
+        -- If it does, return false immediately
         if obj:FindFirstChild("friendly_marker") then
             return false
         end
-        return true
+
+        return true 
     end,
+
 
     -- Set a custom name to use for the enemy models
     CustomName = "🤤",
@@ -125,6 +149,15 @@ end
 game.StarterGui:SetCore("SendNotification", {
     Title = "Script",
     Text = string.format("Script loaded in %.2f seconds (%s loading)", time, rating),
+    Icon = "",
+    Duration = 5
+})
+
+setclipboard('https://discord.gg/4gdBU887Te')
+
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Script",
+    Text = "my discord has been copied to your clipboard",
     Icon = "",
     Duration = 5
 })
