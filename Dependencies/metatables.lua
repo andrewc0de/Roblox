@@ -39,6 +39,7 @@ HookMT.deleteCache = function(name)
         pcall(function() ev:Destroy() end)
         pcall(function() ev:Disconnect() end)
         pcall(function() ev:Remove() end)
+        HookMT["Events"][name] = nil
         return true
     end
     return false
@@ -161,6 +162,7 @@ local oldNamecall;oldNamecall = hookmetamethod(game, "__namecall", newcclosure(f
                 end
                 if suc and type(err)~="nil" then return oldNamecall(Self, err) end
             end
+            if type(indexFound)=="nil" or type(indexFound) then return defaultValue() end
             if type(indexFound)~="nil" and indexFound~=getEmpty() and indexFound~=_getEmpty() then
                 return oldNamecall(Self, indexFound)
             end
